@@ -6,14 +6,19 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "bin": {
-    "i18n-xlsx": "bin/i18n-xlsx.js"
-  },
   "keywords": [
     "i18n",
     "vue-i18n",
     "i18n-xlsx",
     "xlsx"
+  ],
+  "bin": {
+    "i18n-xlsx": "bin/i18n-xlsx.js"
+  },
+  "files": [
+    "index.js",
+    "lib/",
+    "bin/"
   ],
   "author": "wztscau",
   "license": "ISC",
