@@ -19,7 +19,8 @@ if (!Program.path) {
       }
       pwd = path.resolve(pwd, '..')
     }
-    throw new Error('Error: Not a node repository (or any of the parent directories): package.json')
+    console.error('Error: Not a node repository (or any of the parent directories): package.json')
+    process.exit(1)
   })()
 }
 
