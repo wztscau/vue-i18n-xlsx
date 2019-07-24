@@ -1,21 +1,41 @@
 const path = require('path')
+const fs = require('fs')
 const Input = require('./lib/input')
 const Ouput = require('./lib/output')
-
+const chalk = require('chalk')
+const Warn = console.warn
+const Error = console.error
 
 module.exports = function (rootPath) {
-  const projectPath = rootPath ? path.resolve(__dirname, rootPath) : path.join(__dirname, '../..')
+  let projectPath = rootPath ? path.resolve(__dirname, rootPath) : path.join(__dirname, '../..')
+
+  ;(function () {
+    while (projectPath.split(path.sep).filter(p => p).length !== 1) {
+      if (fs.readdirSync(projectPath).includes('package.json')) {
+        return
+      }
+      projectPath = path.resolve(projectPath, '..')
+    }
+    Error(chalk.red('Error: Not a node repository (or any of the parent directories): package.json'))
+    process.exit(1)
+  })()
 
   // Read config
   let config = {}
   try {
     config = require(path.join(projectPath, 'config/index.js'))
   } catch (e) {
-    console.warn('Warn: No config/index.js. Read webpack.config.js')
+    Warn(chalk.yellow(
+      chalk.bgYellow.black(' WARN '),
+      'No config/index.js. Read webpack.config.js'
+    ))
     try {
       config = require(path.join(projectPath, 'webpack.config.js'))
     } catch (e) {
-      console.error('Error: No any config file')
+      Error(chalk.red(
+        chalk.bgRed.black(' ERROR '),
+        'No any config file'
+      ))
     }
   }
 

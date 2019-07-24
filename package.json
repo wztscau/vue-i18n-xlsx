@@ -23,11 +23,11 @@
   "author": "wztscau",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^2.4.2",
+    "commander": "^2.20.0",
     "node-xlsx": "^0.15.0"
   },
   "_from": "vue-i18n-xlsx@1.0.0",
   "_resolved": "https://registry.npm.taobao.org/vue-i18n-xlsx/download/vue-i18n-xlsx-1.0.0.tgz",
-  "devDependencies": {
-    "commander": "^2.20.0"
-  }
+  "devDependencies": {}
 }
