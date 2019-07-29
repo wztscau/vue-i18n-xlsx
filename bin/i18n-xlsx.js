@@ -8,12 +8,12 @@ const Log = console.log
 const { exec, execSync } = require('child_process')
 
 Program
-  .version('1.0.0')
+  .version('2.2.1')
   .usage('[options] [value ...]')
-  .option('-p, --path [value]', '', '')
-  .option('-b, --branch [value]', '', '')
-  .option('-i, --ignore-branch [value]', '', '')
-  .option('-c, --current-branch', '')
+  .option('-p, --path [value]', 'Root path of the relative project.')
+  .option('-b, --branch [value]', 'Branches who needs to collect i18ns.')
+  .option('-i, --ignore-branch [value]', 'Branches who doesn\t not need to collect i18ns.')
+  .option('-c, --current-branch', 'Only needs current branch i18ns.')
   .parse(process.argv)
 
 let pwd = process.cwd()
@@ -31,19 +31,19 @@ if (!Program.path) {
 }
 
 let rootPath = Program.path || pwd
-let includeBranch = Program.branch.split(',').filter(b => b)
-let ignoreBranch = Program.ignoreBranch.split(',')
+let includeBranch = (Program.branch || '').split(',').filter(b => b)
+let ignoreBranch = (Program.ignoreBranch || '').split(',')
 let isCurrentBranch = Program.currentBranch
 
 // Get i18ns only from current branch
 if (isCurrentBranch) {
   require(path.join(__dirname, '../index.js'))(rootPath)
-// Get i18ns from different branchs
+// Get i18ns from different branches
 } else {
   process.chdir(rootPath)
-  let branchsStr = execSync('git branch -l').toString()
-  let branchs = branchsStr.split(/\n/).map(s => s.replace('*', '').trim()).filter(s => s)
-  let currentBranch = branchsStr.match(/\*\s\b(.*)\b/m)[1]
+  let branchesStr = execSync('git branch -l').toString()
+  let branches = branchesStr.split(/\n/).map(s => s.replace('*', '').trim()).filter(s => s)
+  let currentBranch = branchesStr.match(/\*\s(.*)/m)[1]
   let statusStr = execSync('git status').toString()
   let shouldStash = !statusStr.includes('nothing to commit')
   if (shouldStash) {
@@ -53,7 +53,7 @@ if (isCurrentBranch) {
 
   let failCount = 0
   let startTime = Date.now()
-  for (let br of branchs) {
+  for (let br of branches) {
     if (ignoreBranch.includes(br) ||
       (includeBranch.length && !includeBranch.includes(br))
     ) {
@@ -61,7 +61,7 @@ if (isCurrentBranch) {
     }
     Log(chalk.blue('Next branch', br))
 
-    // Checkout different branchs
+    // Checkout different branches
     let coSucc = false
     while (!coSucc) {
       try {
@@ -73,7 +73,7 @@ if (isCurrentBranch) {
       }
     }
 
-    // Collect all i18ns from different branchs into one excel
+    // Collect all i18ns from different branches into one excel
     let mainSucc = false
     while (!mainSucc) {
       try {
@@ -112,7 +112,7 @@ if (isCurrentBranch) {
   process.chdir(__dirname)
   Log(chalk.green(
     chalk.bgGreen.black(' ALL DONE '),
-    `Generate js & excel from different branchs successfully in ${(Date.now() - startTime) / 1000}s`
+    `Generate js & excel from different branches successfully in ${(Date.now() - startTime) / 1000}s`
   ))
 }
 
