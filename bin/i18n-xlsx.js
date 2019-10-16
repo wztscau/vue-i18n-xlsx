@@ -8,12 +8,13 @@ const Log = console.log
 const { exec, execSync } = require('child_process')
 
 Program
-  .version('2.2.1')
+  .version(require('../package.json').version)
   .usage('[options] [value ...]')
   .option('-p, --path [value]', 'Root path of the relative project.')
   .option('-b, --branch [value]', 'Branches who needs to collect i18ns.')
-  .option('-i, --ignore-branch [value]', 'Branches who doesn\t not need to collect i18ns.')
+  .option('-i, --ignore-branch [value]', 'Branches who doesn\'t not need to collect i18ns.')
   .option('-c, --current-branch', 'Only needs current branch i18ns.')
+  .option('-a, --all-branch', 'Need all branch i18ns.')
   .parse(process.argv)
 
 let pwd = process.cwd()
@@ -33,7 +34,7 @@ if (!Program.path) {
 let rootPath = Program.path || pwd
 let includeBranch = (Program.branch || '').split(',').filter(b => b)
 let ignoreBranch = (Program.ignoreBranch || '').split(',')
-let isCurrentBranch = Program.currentBranch
+let isCurrentBranch = !Program.allBranch || Program.currentBranch
 
 // Get i18ns only from current branch
 if (isCurrentBranch) {
