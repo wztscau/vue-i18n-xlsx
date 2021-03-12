@@ -18,7 +18,8 @@
   "files": [
     "index.js",
     "lib/",
-    "bin/"
+    "bin/",
+    "README.md"
   ],
   "author": "wztscau",
   "license": "ISC",
